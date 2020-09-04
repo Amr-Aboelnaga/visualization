@@ -2,7 +2,7 @@ export default class MinHeap {
     heap = [];
     constructor() {
         this.heap = [null];
-        this.set=new Set(null)
+        this.set = new Set(null)
     }
     constructHeap(array) {
         for (let element of array) {
@@ -10,7 +10,7 @@ export default class MinHeap {
         }
     }
     insert(num) {
-        if(this.set.has(num))return;
+        if (this.set.has(num)) return;
         this.heap.push(num);
         this.set.add(num)
         if (this.heap.length > 2) {
@@ -41,8 +41,8 @@ export default class MinHeap {
                     [this.heap[1], this.heap[2]] = [this.heap[2], this.heap[1]]
                 }
             } else if (this.heap.length > 2) {
-                while (this.heap[index].distance > this.heap[left].distance || this.heap[index].distance > this.heap[right].distance) {
-                    if (this.heap[left].distance < this.heap[right].distance) {
+                while (this.heap[index].distance >= this.heap[left].distance || this.heap[index].distance >= this.heap[right].distance) {
+                    if (this.heap[left].distance <= this.heap[right].distance) {
                         let temp = this.heap[index]
                         this.heap[index] = this.heap[left]
                         this.heap[left] = temp

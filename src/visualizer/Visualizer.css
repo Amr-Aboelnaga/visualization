@@ -1,3 +1,12 @@
 .grid {
-  margin: 100px 0 0;
+    margin: 100px 0 0;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.row {
+    height: 25px;
 }

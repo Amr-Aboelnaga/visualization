@@ -1,0 +1,10 @@
+.circle {
+    width: 120px;
+    height: 100px;
+    background-color:red ;
+    border-radius: 200px;
+}
+.flexbox-container {
+    display: flex;
+    flex-direction: row;
+}
