@@ -1,8 +1,10 @@
 export default class MinHeap {
     heap = [];
-    constructor() {
+    visualize = true;
+    constructor(visualize) {
         this.heap = [null];
         this.set = new Set(null)
+        this.visualize = visualize
     }
     constructHeap(array) {
         for (let element of array) {
@@ -10,6 +12,7 @@ export default class MinHeap {
         }
     }
     copy() {
+        if (!this.visualize) { return }
         let currentheap = []
         for (let element of this.heap) {
             currentheap.push(element);
@@ -74,7 +77,6 @@ export default class MinHeap {
                         this.heap[left] = temp
                         index = left
                         const currentheap = this.copy()
-                        console.log(index)
                         actions.push({ action: "swap", element1: index, element2: left, currentheap: currentheap })
                     } else {
                         let temp = this.heap[index]
@@ -82,7 +84,6 @@ export default class MinHeap {
                         this.heap[right] = temp
                         index = right
                         const currentheap = this.copy()
-                        console.log(index)
                         actions.push({ action: "swap", element1: index, element2: right, currentheap: currentheap })
                     }
                     left = index * 2;

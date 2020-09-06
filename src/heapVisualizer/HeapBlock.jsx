@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './HeapBlock.css';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Col } from 'react-bootstrap';
 import MinHeap from '../dataStructures/heap';
 import HeapElement from './HeapElement';
 
@@ -9,56 +9,45 @@ export default class HeapBlock extends Component {
         super();
         this.state = {
             initialheap: [],
-            finalarray: [],
             resizefactor: 1,
             width: 120,
             height: 100,
             permitOverflow: true,
-            heap: new MinHeap(),
+            heap: new MinHeap(true),
             actions: [],
             selected: [],
             swappedElements: [],
-            elementAdded: {},
             remove: false
         }
     }
-    fillTree() {
-        const array = this.state.heap.heap
-        let num = Math.floor(Math.random() * 10)
-        let actions = this.state.heap.insert({ distance: num })
-        const finalarray = [[{ value: array[1], pos: 1 }]]
-        for (let i = 1; i < array.length; i++) {
-            let lastelementchecked = false;
-            finalarray.push([])
-            for (let element of finalarray[i - 1]) {
-                finalarray[i].push({ value: array[element.pos * 2], pos: element.pos * 2 })
-                finalarray[i].push({ value: array[element.pos * 2 + 1], pos: element.pos * 2 + 1 })
-                if (element.pos * 2 == array.length - 1 || element.pos * 2 == array.length) {
-                    lastelementchecked = true
-                }
-            }
-            if (lastelementchecked) break;
-
-        }
-        const initialarray = actions.shift().element
+    heapify(initialarray) {
         const initialheap = [[{ value: initialarray[1], pos: 1 }]]
-        let pos = []
         for (let i = 1; i < initialarray.length; i++) {
             let lastelementchecked = false;
             initialheap.push([])
             for (let element of initialheap[i - 1]) {
                 initialheap[i].push({ value: initialarray[element.pos * 2], pos: element.pos * 2 })
                 initialheap[i].push({ value: initialarray[element.pos * 2 + 1], pos: element.pos * 2 + 1 })
-                if (element.pos * 2 == initialarray.length - 1 || element.pos * 2 == initialarray.length) {
+                if (element.pos * 2 === initialarray.length - 1 || element.pos * 2 === initialarray.length) {
                     lastelementchecked = true
                 }
             }
             if (lastelementchecked) break;
 
         }
+        return initialheap
+    }
+    fillTree() {
+        // const array = this.state.heap.heap
+        let num = Math.floor(Math.random() * 10)
+        let actions = this.state.heap.insert({ distance: num })
+        // const finalarray = this.heapify(array)
+        const initialarray = actions.shift().element
+        const initialheap = this.heapify(initialarray)
         const level = Math.floor(Math.log2(initialarray.length - 1))
         const position = (initialarray.length - 1) - (Math.pow(2, level) - 1) - 1
-        this.setState({ remove: false, heap: this.state.heap, finalarray: finalarray, actions: actions, initialheap: initialheap, selected: [initialheap[level][position]] })
+        this.setState({ readyForNext: false, remove: false, heap: this.state.heap, actions: actions, initialheap: initialheap, selected: [initialheap[level][position]] })
+
     }
     removeSmallest() {
 
@@ -68,23 +57,6 @@ export default class HeapBlock extends Component {
         const level = Math.floor(Math.log2(initialarray.length - 1))
         const position = (initialarray.length - 1) - (Math.pow(2, level) - 1) - 1
         this.setState({ selected: [this.state.initialheap[level][position]], remove: true, actions: actions })
-
-        const array = this.state.heap.heap
-        const finalarray = [[{ value: array[1], pos: 1 }]]
-        for (let i = 1; i < array.length; i++) {
-            let lastelementchecked = false;
-            finalarray.push([])
-            for (let element of finalarray[i - 1]) {
-                finalarray[i].push({ value: array[element.pos * 2], pos: element.pos * 2 })
-                finalarray[i].push({ value: array[element.pos * 2 + 1], pos: element.pos * 2 + 1 })
-                if (element.pos * 2 == array.length - 1 || element.pos * 2 == array.length) {
-                    lastelementchecked = true
-                }
-            }
-            if (lastelementchecked) break;
-
-        }
-        //this.setState({ heap: this.state.heap, initialheap: finalarray })
     }
 
     componentDidUpdate() {
@@ -114,21 +86,7 @@ export default class HeapBlock extends Component {
                 let selected2 = this.state.initialheap[level2][position2]
 
                 const initialarray = currentAction.currentheap
-                const initialheap = [[{ value: initialarray[1], pos: 1 }]]
-                for (let i = 1; i < initialarray.length; i++) {
-                    let lastelementchecked = false;
-                    initialheap.push([])
-                    for (let element of initialheap[i - 1]) {
-                        initialheap[i].push({ value: initialarray[element.pos * 2], pos: element.pos * 2 })
-                        initialheap[i].push({ value: initialarray[element.pos * 2 + 1], pos: element.pos * 2 + 1 })
-                        if (element.pos * 2 == initialarray.length - 1 || element.pos * 2 == initialarray.length) {
-                            lastelementchecked = true
-                        }
-                    }
-                    if (lastelementchecked) break;
-
-                }
-
+                const initialheap = this.heapify(initialarray)
                 setTimeout(() => {
                     this.setState({ actions: this.state.actions, selected: [selected1, selected2], swappedElements: [selected2, selected1], initialheap: initialheap })
                 }, 1000);
@@ -137,21 +95,7 @@ export default class HeapBlock extends Component {
             }
             if (currentAction.action === "remove") {
                 const initialarray = currentAction.currentheap
-                console.log(initialarray)
-                const initialheap = [[{ value: initialarray[1], pos: 1 }]]
-                for (let i = 1; i < initialarray.length; i++) {
-                    let lastelementchecked = false;
-                    initialheap.push([])
-                    for (let element of initialheap[i - 1]) {
-                        initialheap[i].push({ value: initialarray[element.pos * 2], pos: element.pos * 2 })
-                        initialheap[i].push({ value: initialarray[element.pos * 2 + 1], pos: element.pos * 2 + 1 })
-                        if (element.pos * 2 === initialarray.length - 1 || element.pos * 2 === initialarray.length) {
-                            lastelementchecked = true
-                        }
-                    }
-                    if (lastelementchecked) break;
-
-                }
+                const initialheap = this.heapify(initialarray)
                 setTimeout(() => {
 
                     this.setState({
@@ -161,23 +105,9 @@ export default class HeapBlock extends Component {
                     })
                 }, 1000);
             }
-            if (currentAction.action == "settle") {
+            if (currentAction.action === "settle") {
                 const initialarray = currentAction.currentheap
-                console.log(initialarray)
-                const initialheap = [[{ value: initialarray[1], pos: 1 }]]
-                for (let i = 1; i < initialarray.length; i++) {
-                    let lastelementchecked = false;
-                    initialheap.push([])
-                    for (let element of initialheap[i - 1]) {
-                        initialheap[i].push({ value: initialarray[element.pos * 2], pos: element.pos * 2 })
-                        initialheap[i].push({ value: initialarray[element.pos * 2 + 1], pos: element.pos * 2 + 1 })
-                        if (element.pos * 2 == initialarray.length - 1 || element.pos * 2 == initialarray.length) {
-                            lastelementchecked = true
-                        }
-                    }
-                    if (lastelementchecked) break;
-
-                }
+                const initialheap = this.heapify(initialarray)
                 setTimeout(() => {
 
                     this.setState({
@@ -185,7 +115,7 @@ export default class HeapBlock extends Component {
                         initialheap: initialheap,
                         remove: false
                     })
-                }, 100);
+                }, 500);
             }
         }
     }
@@ -208,14 +138,14 @@ export default class HeapBlock extends Component {
         return { contains: false, pos: 0 };
     }
     render() {
-        const { finalarray, width, height, initialheap, actions, selected, swappedElements, remove } = this.state
+        const { width, height, initialheap, selected, swappedElements, remove } = this.state
         return (
-
-            <div key={Math.random()} style={{
+            < div key={Math.random()} style={{
                 width: "100%",
                 display: "inline-block",
                 overflowX: "auto"
-            }} ref={(el) => { this.element = el }}>
+            }
+            } ref={(el) => { this.element = el }}>
 
                 <button onClick={() => this.fillTree()}>
                     Add to Heap
@@ -227,11 +157,9 @@ export default class HeapBlock extends Component {
                     initialheap.map((row, rowIdx) => {
                         let elements = []
                         return (
-                            <div style={{
+                            <div key={rowIdx} style={{
                                 display: "flex",
-                                flexDirection: "row",
-                                //width: `1000px`
-
+                                flexDirection: "row"
                             }}>
                                 {
                                     row.map((col, colidx) => {
@@ -252,16 +180,16 @@ export default class HeapBlock extends Component {
                                         let color = "brown"
                                         if (col.value !== undefined)
                                             elements.push(
-                                                <Col style={{
+                                                <Col key={colidx} style={{
                                                     display: 'flex',
                                                     alignItems: 'center',
                                                     justifyContent: 'center',
                                                 }}>
-                                                    <HeapElement remove={remove && rowIdx == 0 && colidx == 0} key={colidx * Math.random()} color={color} value={col.value} width={width} height={height} isSelected={isSelected} toBeSwappedWith={toBeSwappedWith} ></HeapElement>
+                                                    <HeapElement remove={remove && rowIdx === 0 && colidx === 0} key={colidx * Math.random()} color={color} value={col.value} width={width} height={height} isSelected={isSelected} toBeSwappedWith={toBeSwappedWith} ></HeapElement>
                                                 </Col>)
                                         else {
                                             elements.push(
-                                                <Col style={{
+                                                <Col key={colidx} style={{
                                                     display: 'flex',
                                                     alignItems: 'center',
                                                     justifyContent: 'center',
@@ -275,15 +203,17 @@ export default class HeapBlock extends Component {
                                                 </Col>)
 
                                         }
+                                        return (<div key={colidx * Math.random()}></div>);
                                     })}
                                 {elements}
                             </div>
 
                         )
 
-                    })}
+                    })
+                }
 
-            </div>
+            </div >
 
 
 

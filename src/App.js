@@ -5,9 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Navbar, Nav, Form, FormControl, Button } from 'react-bootstrap';
 import {
   BrowserRouter as Router,
-  Switch,
   Route,
-  Link
 } from "react-router-dom";
 import HeapBlock from './heapVisualizer/HeapBlock';
 function App() {
@@ -17,9 +15,9 @@ function App() {
         <Navbar bg="dark" variant="dark">
           <Navbar.Brand href="#home">Navbar</Navbar.Brand>
           <Nav className="mr-auto">
-            <Nav.Link href="/visualization/pathfinding">PathFinding</Nav.Link>
-            <Nav.Link href="/visualization/sorting">Sorting</Nav.Link>
-            <Nav.Link href="/visualization/datastructures">Data Structures</Nav.Link>
+            <Nav.Link href="/pathfinding">PathFinding</Nav.Link>
+            <Nav.Link href="/sorting">Sorting</Nav.Link>
+            <Nav.Link href="/datastructures">Data Structures</Nav.Link>
           </Nav>
           <Form inline>
             <FormControl type="text" placeholder="Search" className="mr-sm-2" />
@@ -32,12 +30,12 @@ function App() {
 
         <header className="App-header">
           <Route
-            path="/visualization/sorting"
+            path="/sorting"
             component={HeapBlock}
             exact
           />
           <Route
-            path="/visualization/pathfinding"
+            path="/pathfinding"
             component={Wrapper}
             exact
           />

@@ -7,10 +7,10 @@ import MinHeap from "../dataStructures/heap";
 export function dijkstra(grid, startNode, finishNode) {
     const visitedNodesInOrder = [];
     startNode.distance = 0;
-    let unvisitedNodes = new MinHeap();
+    let unvisitedNodes = new MinHeap(false);
     unvisitedNodes.insert(startNode)
     while (unvisitedNodes.heap.length > 1) {
-        const closestNode = unvisitedNodes.remove();
+        const closestNode = unvisitedNodes.remove().result;
         // If we encounter a wall, we skip it.
         if (closestNode.isWall) continue;
         // If the closest node is at a distance of infinity,
