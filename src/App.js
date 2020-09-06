@@ -30,9 +30,8 @@ function App() {
 
         <header className="App-header">
           <Route
-            path="/visualization/sorting"
+            path={'*/sorting'}
             component={HeapBlock}
-            exact
           />
           <Route
             path="/pathfinding"
