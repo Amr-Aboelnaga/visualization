@@ -30,7 +30,7 @@ function App() {
 
         <header className="App-header">
           <Route
-            path="/sorting"
+            path="/visualization/sorting"
             component={HeapBlock}
 
           />
