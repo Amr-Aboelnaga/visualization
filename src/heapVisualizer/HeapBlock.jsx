@@ -115,7 +115,7 @@ export default class HeapBlock extends Component {
                         initialheap: initialheap,
                         remove: false
                     })
-                }, 500);
+                }, 300);
             }
         }
     }
