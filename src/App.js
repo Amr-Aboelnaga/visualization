@@ -32,7 +32,7 @@ function App() {
           <Route
             path="/visualization/sorting"
             component={HeapBlock}
-
+            exact
           />
           <Route
             path="/pathfinding"
