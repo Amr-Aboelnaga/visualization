@@ -52,7 +52,6 @@ export default class HeapBlock extends Component {
     removeSmallest() {
 
         let actions = this.state.heap.remove().actions
-        console.log(actions)
         const initialarray = actions.shift().element
         const level = Math.floor(Math.log2(initialarray.length - 1))
         const position = (initialarray.length - 1) - (Math.pow(2, level) - 1) - 1
@@ -78,6 +77,8 @@ export default class HeapBlock extends Component {
         const currentAction = this.state.actions.shift()
         if (currentAction) {
             if (currentAction.action === "swap") {
+                let initialarray = currentAction.currentheap
+
                 const level1 = Math.floor(Math.log2(currentAction.element1))
                 const position1 = (currentAction.element1) - (Math.pow(2, level1) - 1) - 1
                 const level2 = Math.floor(Math.log2(currentAction.element2))
@@ -85,7 +86,6 @@ export default class HeapBlock extends Component {
                 let selected1 = this.state.initialheap[level1][position1]
                 let selected2 = this.state.initialheap[level2][position2]
 
-                const initialarray = currentAction.currentheap
                 const initialheap = this.heapify(initialarray)
                 setTimeout(() => {
                     this.setState({ actions: this.state.actions, selected: [selected1, selected2], swappedElements: [selected2, selected1], initialheap: initialheap })
@@ -94,7 +94,8 @@ export default class HeapBlock extends Component {
 
             }
             if (currentAction.action === "remove") {
-                const initialarray = currentAction.currentheap
+                let initialarray = currentAction.currentheap
+
                 const initialheap = this.heapify(initialarray)
                 setTimeout(() => {
 
@@ -106,16 +107,17 @@ export default class HeapBlock extends Component {
                 }, 1000);
             }
             if (currentAction.action === "settle") {
-                const initialarray = currentAction.currentheap
+                const initialarray = this.state.heap.heap
                 const initialheap = this.heapify(initialarray)
                 setTimeout(() => {
 
                     this.setState({
                         actions: this.state.actions,
                         initialheap: initialheap,
+                        selected: [],
                         remove: false
                     })
-                }, 300);
+                }, 600);
             }
         }
     }
@@ -139,6 +141,7 @@ export default class HeapBlock extends Component {
     }
     render() {
         const { width, height, initialheap, selected, swappedElements, remove } = this.state
+
         return (
             < div key={Math.random()} style={{
                 width: "100%",

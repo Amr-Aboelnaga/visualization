@@ -65,26 +65,29 @@ export default class MinHeap {
             let right = index * 2 + 1
             if (this.heap.length === 3) {
                 if (this.heap[1].distance > this.heap[2].distance) {
+                    const currentheap = this.copy();
+                    actions.push({ action: "swap", element1: 1, element2: 2, currentheap: currentheap });
                     [this.heap[1], this.heap[2]] = [this.heap[2], this.heap[1]]
-                    const currentheap = this.copy()
-                    actions.push({ action: "swap", element1: 1, element2: 2, currentheap: currentheap })
+
                 }
             } else if (this.heap.length > 2) {
                 while (this.heap[index].distance >= this.heap[left].distance || this.heap[index].distance >= this.heap[right].distance) {
                     if (this.heap[left].distance <= this.heap[right].distance) {
+                        const currentheap = this.copy()
+                        actions.push({ action: "swap", element1: index, element2: left, currentheap: currentheap })
                         let temp = this.heap[index]
                         this.heap[index] = this.heap[left]
                         this.heap[left] = temp
                         index = left
-                        const currentheap = this.copy()
-                        actions.push({ action: "swap", element1: index, element2: left, currentheap: currentheap })
+
                     } else {
+                        const currentheap = this.copy()
+                        actions.push({ action: "swap", element1: index, element2: right, currentheap: currentheap })
                         let temp = this.heap[index]
                         this.heap[index] = this.heap[right]
                         this.heap[right] = temp
                         index = right
-                        const currentheap = this.copy()
-                        actions.push({ action: "swap", element1: index, element2: right, currentheap: currentheap })
+
                     }
                     left = index * 2;
                     right = index * 2 + 1;
