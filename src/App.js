@@ -15,8 +15,8 @@ function App() {
         <Navbar bg="dark" variant="dark">
           <Navbar.Brand href="#home">Navbar</Navbar.Brand>
           <Nav className="mr-auto">
-            <Nav.Link href="visualization/#pathfinding">PathFinding</Nav.Link>
-            <Nav.Link href="visualization/#sorting">Sorting</Nav.Link>
+            <Nav.Link href="/#pathfinding">PathFinding</Nav.Link>
+            <Nav.Link href="/#sorting">Sorting</Nav.Link>
             <Nav.Link href="visualization/#datastructures">Data Structures</Nav.Link>
           </Nav>
           <Form inline>
