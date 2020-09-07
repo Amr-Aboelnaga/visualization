@@ -10,6 +10,7 @@ import {
   Route,
 } from "react-router-dom";
 import HeapBlock from './heapVisualizer/HeapBlock';
+import SortingVisualizer from './sortingVisualizer/SortingVisualizer';
 function App() {
   return (
     <HashRouter basename={process.env.PUBLIC_URL}>
@@ -23,6 +24,10 @@ function App() {
 
             <LinkContainer to="/heapvisualization">
               <Button variant="outline-info">HeapVisualization</Button>
+
+            </LinkContainer>
+            <LinkContainer to="/sortingvisualization">
+              <Button variant="outline-info">SortingVisualization</Button>
 
             </LinkContainer>
 
@@ -46,6 +51,11 @@ function App() {
           <Route
             path="/pathfinding"
             component={Wrapper}
+            exact
+          />
+          <Route
+            path="/sortingvisualization"
+            component={SortingVisualizer}
             exact
           />
         </header>
