@@ -35,10 +35,8 @@ function App() {
             </LinkContainer>
 
           </Nav>
-          <Form inline>
-            <FormControl type="text" placeholder="Search" className="mr-sm-2" />
-            <Button variant="outline-info">Search</Button>
-          </Form>
+
+          <Button variant="outline-info" onClick={() => { window.open("https://github.com/Amr-Aboelnaga/visualization", "_blank") }}>Github Repo</Button>
         </Navbar>
 
         <div style={{ "backgroundColor": "#282c34" }}>
