@@ -1,6 +1,7 @@
 import { dijkstra, getNodesInShortestPathOrder } from '../algorithms/dijkstra';
 import React, { Component } from 'react';
 import './Node.css';
+import { Button, Container } from 'react-bootstrap';
 
 const START_NODE_ROW = 7;
 const START_NODE_COL = 15;
@@ -68,48 +69,54 @@ export default class Visualizer extends Component {
     }
     render() {
         const { grid, visitedNodesInOrder, nodesInShortestPathOrder, mousedown } = this.state;
-        return (
-            <>
-                <button onClick={() => this.visualizeDijkstra()}>
-                    Visualize Dijkstra's Algorithm
-            </button>
-                <button onClick={() => this.props.reset()}>
-                    Clear Board
-            </button>
-                <div className="grid">
-                    {grid.map((row, rowIdx) => {
-                        return (
-                            <div className="row" key={rowIdx}>
-                                {row.map((node, nodeIdx) => {
-                                    const { row, col, isFinish, isStart, isWall, isVisited } = node;
-                                    let isPath = this.getIndex(nodesInShortestPathOrder, node)
-                                    if (!!isPath) {
-                                        isPath += visitedNodesInOrder.length
-                                    }
-                                    return (
-                                        <Node
-                                            key={nodeIdx}
-                                            col={col}
-                                            isFinish={isFinish}
-                                            isStart={isStart}
-                                            isWall={isWall}
-                                            row={row}
-                                            isVisited={isVisited}
-                                            isPath={isPath}
-                                            wallIt={this.wallIt}
-                                            mousedown={mousedown}
-                                            mousedownHandle={() => this.handleDown()}
-                                            mouseUpHandle={() => this.handleUp()}
-                                            delay={this.getIndex(visitedNodesInOrder, node)}
-                                        ></Node>
-                                    );
+        const { height, width } = this.props
 
-                                })}
-                            </div>
-                        );
-                    })}
-                </div>
-            </>
+        return (
+            <div style={{
+                verticalAlign: 'top', display: ' inline-block'
+            }}>
+                <Button variant="outline-info" onClick={() => this.visualizeDijkstra()}>
+                    Visualize Dijkstra's Algorithm
+            </Button>
+                <Button variant="outline-info" onClick={() => this.props.reset()}>
+                    Clear Board
+            </Button>
+                < Container style={{ maxWidth: width - 100, maxHeight: height - 50, minWidth: width - 100, minHeight: height - 50, marginTop: '200px', justifyContent: 'center' }}>
+                    {
+                        grid.map((row, rowIdx) => {
+                            return (
+                                <div className="row" key={rowIdx} style={{ justifyContent: 'center' }}>
+                                    {row.map((node, nodeIdx) => {
+                                        const { row, col, isFinish, isStart, isWall, isVisited } = node;
+                                        let isPath = this.getIndex(nodesInShortestPathOrder, node)
+                                        if (!!isPath) {
+                                            isPath += visitedNodesInOrder.length
+                                        }
+                                        return (
+                                            <Node
+                                                key={nodeIdx}
+                                                col={col}
+                                                isFinish={isFinish}
+                                                isStart={isStart}
+                                                isWall={isWall}
+                                                row={row}
+                                                isVisited={isVisited}
+                                                isPath={isPath}
+                                                wallIt={this.wallIt}
+                                                mousedown={mousedown}
+                                                mousedownHandle={() => this.handleDown()}
+                                                mouseUpHandle={() => this.handleUp()}
+                                                delay={this.getIndex(visitedNodesInOrder, node)}
+                                            ></Node>
+                                        );
+
+                                    })}
+                                </div>
+                            );
+                        })
+                    }
+                </Container>
+            </div>
         );
     }
 }

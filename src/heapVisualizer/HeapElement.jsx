@@ -20,7 +20,7 @@ export default class HeapElement extends Component {
         setTimeout((toBeSwappedWith) => {
             const value = this.state.toBeSwappedWith ? this.state.toBeSwappedWith.value : this.state.value
             this.setState({
-                color: "brown",
+                color: "teal",
                 value: value,
                 toBeSwappedWith: undefined,
                 isSelected: false

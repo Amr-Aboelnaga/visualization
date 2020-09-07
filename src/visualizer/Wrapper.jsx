@@ -2,10 +2,12 @@
 import React, { Component } from 'react';
 import Visualizer from './Visualizer';
 export default class Wrapper extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             reset: false,
+            height: this.props.height,
+            width: this.props.width
         }
     }
     reset() {
@@ -22,7 +24,7 @@ export default class Wrapper extends Component {
     }
     render() {
         return (
-            !this.state.reset ? <Visualizer reset={() => this.reset()}></Visualizer> : null
+            !this.state.reset ? <Visualizer reset={() => this.reset()} width={this.props.width} height={this.props.height}></Visualizer > : null
         )
     }
 }

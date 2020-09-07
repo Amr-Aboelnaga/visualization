@@ -11,7 +11,10 @@ import {
 } from "react-router-dom";
 import HeapBlock from './heapVisualizer/HeapBlock';
 import SortingVisualizer from './sortingVisualizer/SortingVisualizer';
+import useWindowDimensions from './hooks/windowSizeHook';
+
 function App() {
+  const { height, width } = useWindowDimensions()
   return (
     <HashRouter basename={process.env.PUBLIC_URL}>
       <div className="App">
@@ -45,17 +48,23 @@ function App() {
         <header className="App-header">
           <Route
             path='/heapvisualization'
-            component={HeapBlock}
+            render={() => (
+              <HeapBlock width={width} height={height} />
+            )}
             exact
           />
           <Route
             path="/pathfinding"
-            component={Wrapper}
+            render={() => (
+              <Wrapper width={width} height={height} />
+            )}
             exact
           />
           <Route
             path="/sortingvisualization"
-            component={SortingVisualizer}
+            render={() => (
+              <SortingVisualizer width={width} height={height} />
+            )}
             exact
           />
         </header>

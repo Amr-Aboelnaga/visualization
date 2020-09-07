@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './HeapBlock.css';
-import { Col } from 'react-bootstrap';
+import { Col, Button, Container } from 'react-bootstrap';
 import MinHeap from '../dataStructures/heap';
 import HeapElement from './HeapElement';
 
@@ -95,7 +95,6 @@ export default class HeapBlock extends Component {
             }
             if (currentAction.action === "remove") {
                 let initialarray = currentAction.currentheap
-
                 const initialheap = this.heapify(initialarray)
                 setTimeout(() => {
 
@@ -141,82 +140,95 @@ export default class HeapBlock extends Component {
     }
     render() {
         const { width, height, initialheap, selected, swappedElements, remove } = this.state
-
+        const windowWidth = this.props.width
+        const windowHeight = this.props.height
         return (
-            < div key={Math.random()} style={{
-                width: "100%",
-                display: "inline-block",
-                overflowX: "auto"
-            }
-            } ref={(el) => { this.element = el }}>
-
-                <button onClick={() => this.fillTree()}>
+            <div style={{
+                verticalAlign: 'top', display: ' inline-block'
+            }}>
+                <Button variant="outline-info" onClick={() => this.fillTree()}>
                     Add to Heap
-            </button>
-                <button onClick={() => this.removeSmallest()}>
+            </Button>
+                <Button variant="outline-info" onClick={() => this.removeSmallest()}>
                     Remove smallest number from Heap
-            </button>
-                {
-                    initialheap.map((row, rowIdx) => {
-                        let elements = []
-                        return (
-                            <div key={rowIdx} style={{
-                                display: "flex",
-                                flexDirection: "row"
-                            }}>
-                                {
-                                    row.map((col, colidx) => {
+            </Button>
+                < Container key={Math.random()} style={{
+                    width: "100%",
+                    display: "inline-block",
+                    overflowX: "auto",
+                    maxWidth: windowWidth - 100, maxHeight: windowHeight - 50, minWidth: windowWidth - 100, minHeight: windowHeight - 50, marginTop: '200px'
 
-                                        if (col.value)
-                                            if (col.value.distance !== undefined) {
-                                                col.value = col.value.distance
-                                            }
-                                        let isSelected = false
-                                        let toBeSwappedWith = undefined
-                                        for (let element of selected) {
-                                            if (element.pos === col.pos) {
-                                                isSelected = true
-                                                toBeSwappedWith = swappedElements.shift()
-                                                break;
-                                            }
-                                        }
-                                        let color = "brown"
-                                        if (col.value !== undefined)
-                                            elements.push(
-                                                <Col key={colidx} style={{
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                }}>
-                                                    <HeapElement remove={remove && rowIdx === 0 && colidx === 0} key={colidx * Math.random()} color={color} value={col.value} width={width} height={height} isSelected={isSelected} toBeSwappedWith={toBeSwappedWith} ></HeapElement>
-                                                </Col>)
-                                        else {
-                                            elements.push(
-                                                <Col key={colidx} style={{
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                }}>
-                                                    <div style={{
-                                                        width: `${width}px`,
-                                                        height: `${height}px`,
-                                                        "backgroundColor": "",
-                                                        "borderRadius": "200px"
-                                                    }}></div>
-                                                </Col>)
-
-                                        }
-                                        return (<div key={colidx * Math.random()}></div>);
-                                    })}
-                                {elements}
-                            </div>
-
-                        )
-
-                    })
                 }
+                } ref={(el) => { this.element = el }}>
 
-            </div >
+
+
+                    {
+                        initialheap.map((row, rowIdx) => {
+                            let elements = []
+                            return (
+                                <div key={rowIdx} style={{
+                                    display: "flex",
+                                    flexDirection: "row"
+                                }}>
+                                    {
+                                        row.map((col, colidx) => {
+
+                                            if (col.value)
+                                                if (col.value.distance !== undefined) {
+                                                    col.value = col.value.distance
+                                                }
+                                            let isSelected = false
+                                            let toBeSwappedWith = undefined
+                                            for (let element of selected) {
+                                                if (element.pos === col.pos) {
+                                                    isSelected = true
+                                                    toBeSwappedWith = swappedElements.shift()
+                                                    break;
+                                                }
+                                            }
+                                            let color = "teal"
+                                            if (col.value !== undefined)
+                                                elements.push(
+                                                    <Col key={colidx} style={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                    }}>
+                                                        <HeapElement remove={remove && rowIdx === 0 && colidx === 0} key={colidx * Math.random()} color={color} value={col.value} width={width} height={height} isSelected={isSelected} toBeSwappedWith={toBeSwappedWith} ></HeapElement>
+                                                    </Col>)
+                                            else {
+                                                elements.push(
+                                                    <Col key={colidx} style={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                    }}>
+                                                        <div style={{
+                                                            width: `${width}px`,
+                                                            height: `${height}px`,
+                                                            "backgroundColor": "",
+                                                            "borderRadius": "200px"
+                                                        }}></div>
+                                                    </Col>)
+
+                                            }
+                                            return (<div key={colidx * Math.random()}></div>);
+                                        })}
+                                    {elements}
+                                </div>
+
+                            )
+
+                        })
+
+                    }
+
+                </Container >
+
+            </div>
+
+
 
 
 

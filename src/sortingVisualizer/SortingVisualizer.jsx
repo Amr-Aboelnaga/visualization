@@ -1,18 +1,26 @@
 import React, { Component } from 'react';
-import { Container, Col, Row } from 'react-bootstrap';
+import { Container, Col, Row, Button } from 'react-bootstrap';
 import { bubbleSort } from '../algorithms/bubbleSort'
 import ArrayElement from './ArrayElement';
+
 export default class SortingVisualizer extends Component {
-    constructor() {
-        super();
+
+
+    constructor(props) {
+        super(props);
         this.state = {
             array: [],
             largestSoFar: -Infinity,
             actions: [],
             mergeSelected: [],
             selected: [],
-            correctOrder: []
+            height: this.props.height,
+            width: this.props.width
         }
+
+    }
+    clear() {
+        this.setState({ array: [], selected: [], mergeSelected: [], largestSoFar: [] })
     }
     fillArray() {
         this.state.array.push(7, 6, 5, 4, 3, 2, 1)
@@ -132,16 +140,6 @@ export default class SortingVisualizer extends Component {
                     this.setState({ actions: this.state.actions, array: currentArray, selected: [] })
                 }, 10);
             }
-
-        // const mergeCurrentAction = this.state.correctOrder.shift()
-        // if (mergeCurrentAction)
-        //     if (mergeCurrentAction.action === "mergeswap") {
-        //         [this.state.array[mergeCurrentAction.element1], this.state.array[mergeCurrentAction.element2]] = [this.state.array[mergeCurrentAction.element2], this.state.array[mergeCurrentAction.element1]]
-        //         this.setState({
-        //             array: this.state.array
-        //         })
-        //     }
-
     }
     contains(a, obj) {
         for (var i = 0; i < a.length; i++) {
@@ -159,77 +157,83 @@ export default class SortingVisualizer extends Component {
         return newArray
     }
 
+
     render() {
+
         const { array, largestSoFar, selected, mergeSelected } = this.state
-        // console.log(mergeSelected)
+        const { width, height } = this.props
+        console.log(width)
+        console.log(height)
+
         const space = (1 / array.length) * 100
         return (
+            <div style={{
+                verticalAlign: 'top', display: ' inline-block'
+            }}>
 
-            < Container style={{ maxWidth: 2000, maxHeight: 500 }}>
-                <button onClick={() => this.fillArray()}>
+                <Button variant="outline-info" onClick={() => this.fillArray()}>
                     Fill Array
-            </button>
-                <button onClick={() => this.addElementToArray()}>
+            </Button>
+                <Button variant="outline-info" onClick={() => this.addElementToArray()}>
                     Add to Array
-            </button>
-                <button onClick={() => this.sort()}>
+            </Button>
+                <Button variant="outline-info" onClick={() => this.sort()}>
                     BubbleSort
-            </button>
-                <button onClick={() => this.mergeSort(this.state.array)}>
-                    mergeSort
-            </button>
-                <Row>
+            </Button>
+                <Button variant="outline-info" onClick={() => this.mergeSort(this.state.array)}>
+                    MergeSort
+            </Button>
+                <Button variant="outline-info" onClick={() => this.clear()}>
+                    Clear
+            </Button>
 
-                    {
-                        array.map((element, index) => {
-                            let isSelected = false
-                            let i = 0
-                            //console.log("mergeSelected: " + mergeSelected)
-                            for (let num of mergeSelected) {
-                                if (element === num) {
+                < Container style={{ maxWidth: width - 100, maxHeight: height - 50, minWidth: width - 100, minHeight: height - 50, marginTop: '200px' }}>
 
-                                    //console.log("element: " + element + " at index " + index + "  mergeSelected is: " + mergeSelected + "  i is: " + i)
-                                    element = mergeSelected[i]
-                                    isSelected = true
 
-                                }
-                                i = i + 1;
-                            }
-                            // for (let i = 0; i < mergeSelected; i++) {
-                            //     let inspect = mergeSelected[i]
-                            //     if (element === inspect) {
-                            //         if (index != i) {
-                            //             console.log("here")
-                            //         }
-                            //         isSelected = true
+                    <Row>
 
-                            //     }
-                            // }
-                            if (selected)
-                                for (let element of selected) {
-                                    if (element === index) {
+                        {
+                            array.map((element, index) => {
+                                let isSelected = false
+                                let i = 0
+                                for (let num of mergeSelected) {
+                                    if (element === num) {
+
+                                        element = mergeSelected[i]
                                         isSelected = true
+
                                     }
+                                    i = i + 1;
                                 }
-                            return (
-                                <Col key={Math.random()} style={{
-                                    width: `${space}%`,
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    transform: 'rotate(180deg)'
-                                }}>
-                                    <ArrayElement key={index * Math.random()} value={element} largestSoFar={largestSoFar} variant={"info"} isSelected={isSelected}></ArrayElement>
-                                </Col>
 
-                            );
-                        })
-                    }
+                                if (selected)
+                                    for (let element of selected) {
+                                        if (element === index) {
+                                            isSelected = true
+                                        }
+                                    }
+                                return (
+                                    <Col key={Math.random()} style={{
+                                        width: `${space}%`,
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        transform: 'rotate(180deg)'
+                                    }}>
+                                        <ArrayElement key={index * Math.random()} value={element} largestSoFar={largestSoFar} variant={"info"} isSelected={isSelected}></ArrayElement>
+                                    </Col>
+
+                                );
+                            })
+                        }
 
 
-                </Row>
+                    </Row>
 
 
-            </Container >
+                </Container >
+            </div>
+
+
 
         )
     }

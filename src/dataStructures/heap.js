@@ -50,9 +50,11 @@ export default class MinHeap {
 
         if (this.heap.length > 1) {
             if (this.heap.length === 2) {
-                const currentheap = this.copy()
+                const res = this.heap.pop()
+
+                let currentheap = this.copy()
                 actions.push({ action: "remove", element: 0, currentheap: currentheap })
-                let result = { actions: actions, result: this.heap.pop() }
+                let result = { actions: actions, result: res }
                 return result
             }
             let smallest = this.heap[1]
@@ -101,7 +103,8 @@ export default class MinHeap {
             let result = { actions: actions, result: smallest }
             return result
         } else {
-            return;
+            return
+
         }
 
     }
