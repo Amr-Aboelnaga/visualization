@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 import Wrapper from './visualizer/Wrapper';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Navbar, Nav, Form, FormControl, Button } from 'react-bootstrap';
+import { Navbar, Nav, Button } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap'
 
 import {

@@ -17,7 +17,9 @@ export default class Visualizer extends Component {
             visitedNodesInOrder: [],
             nodesInShortestPathOrder: [],
             mousedown: false,
-            reset: false
+            reset: false,
+            weightdown: false,
+            variant: "outline-info"
         };
     }
     contains(a, obj) {
@@ -61,33 +63,51 @@ export default class Visualizer extends Component {
     wallIt(row, col) {
         Visualizer.staticgrid[row][col].isWall = !Visualizer.staticgrid[row][col].isWall
     }
+    weightIt(row, col) {
+        Visualizer.staticgrid[row][col].isWeight = !Visualizer.staticgrid[row][col].isWeight
+    }
     handleDown() {
         this.setState({ mousedown: true });
     }
     handleUp() {
         this.setState({ mousedown: false });
     }
+    switchToWeights() {
+        let variant = ""
+        if (this.state.variant === "outline-info") {
+            variant = "danger"
+        } else {
+            variant = "outline-info"
+        }
+        this.setState({ variant: variant, weightdown: !this.state.weightdown })
+    }
     render() {
-        const { grid, visitedNodesInOrder, nodesInShortestPathOrder, mousedown } = this.state;
+        const { grid, visitedNodesInOrder, nodesInShortestPathOrder, mousedown, weightdown, variant } = this.state;
         const { height, width } = this.props
 
         return (
             <div style={{
                 verticalAlign: 'top', display: ' inline-block'
-            }}>
+            }}
+            >
+
                 <Button variant="outline-info" onClick={() => this.visualizeDijkstra()}>
                     Visualize Dijkstra's Algorithm
             </Button>
                 <Button variant="outline-info" onClick={() => this.props.reset()}>
                     Clear Board
             </Button>
-                < Container style={{ maxWidth: width - 100, maxHeight: height - 50, minWidth: width - 100, minHeight: height - 50, marginTop: '200px', justifyContent: 'center' }}>
+                <Button variant={variant} onClick={() => this.switchToWeights()}>
+                    Weights Down
+            </Button>
+                < Container style={{ maxWidth: width - 100, maxHeight: height - 50, minWidth: width - 100, minHeight: height - 50, marginTop: '100px', justifyContent: 'center' }}
+                >
                     {
                         grid.map((row, rowIdx) => {
                             return (
                                 <div className="row" key={rowIdx} style={{ justifyContent: 'center' }}>
                                     {row.map((node, nodeIdx) => {
-                                        const { row, col, isFinish, isStart, isWall, isVisited } = node;
+                                        const { row, col, isFinish, isStart, isWall, isVisited, weight } = node;
                                         let isPath = this.getIndex(nodesInShortestPathOrder, node)
                                         if (!!isPath) {
                                             isPath += visitedNodesInOrder.length
@@ -103,9 +123,12 @@ export default class Visualizer extends Component {
                                                 isVisited={isVisited}
                                                 isPath={isPath}
                                                 wallIt={this.wallIt}
+                                                weightIt={this.weightIt}
                                                 mousedown={mousedown}
+                                                weightdown={weightdown}
                                                 mousedownHandle={() => this.handleDown()}
                                                 mouseUpHandle={() => this.handleUp()}
+                                                weight={weight}
                                                 delay={this.getIndex(visitedNodesInOrder, node)}
                                             ></Node>
                                         );
@@ -145,6 +168,7 @@ const createNode = (col, row) => {
         isStart: row === START_NODE_ROW && col === START_NODE_COL,
         isFinish: row === FINISH_NODE_ROW && col === FINISH_NODE_COL,
         distance: Infinity,
+        isWeight: false,
         isVisited: false,
         isWall: false,
         previousNode: null,
@@ -161,10 +185,13 @@ export class Node extends Component {
                     ? 'node-start'
                     : this.props.isWall
                         ? 'node-wall'
-                        : '',
+                        : this.props.isWeight
+                            ? 'node-weight'
+                            : '',
             visited: false,
             pathAnimated: false,
-            isWall: this.props.isWall
+            isWall: this.props.isWall,
+            isWeight: this.props.isWeight,
         }
     }
     switch() {
@@ -182,6 +209,19 @@ export class Node extends Component {
                 pathAnimated: true
             })
         }, this.props.isPath);
+    }
+    beWeight() {
+        if (this.state.isWeight) {
+            this.setState({
+                extraClassName: '',
+                isWeight: false
+            })
+        } else {
+            this.setState({
+                extraClassName: 'node-weight',
+                isWeight: true
+            })
+        }
     }
     beWall() {
         if (this.state.isWall) {
@@ -204,22 +244,29 @@ export class Node extends Component {
             mousedownHandle,
             mouseUpHandle,
             row,
+            weightIt
+
         } = this.props;
+
         if (this.props.isVisited && this.state.visited === false) {
             this.switch()
         }
         if (this.props.isPath !== false && this.state.pathAnimated === false) {
             this.switchPath()
         }
-
         return (
             <div
                 id={`node-${row}-${col}`}
                 className={`node ${this.state.extraClassName}`}
                 onMouseDown={() => {
                     if (!this.props.isStart && !this.props.isFinish) {
-                        this.beWall();
-                        wallIt(row, col);
+                        if (this.props.weightdown) {
+                            this.beWeight();
+                            weightIt(row, col);
+                        } else {
+                            this.beWall();
+                            wallIt(row, col);
+                        }
                         mousedownHandle();
                     }
                 }}
@@ -227,12 +274,19 @@ export class Node extends Component {
                 onMouseOver={() => {
                     if (!this.props.isStart && !this.props.isFinish)
                         if (this.props.mousedown) {
-                            this.beWall();
-                            wallIt(row, col);
+                            if (this.props.weightdown) {
+                                this.beWeight();
+                                weightIt(row, col);
+                            } else {
+                                this.beWall();
+                                wallIt(row, col);
+                            }
+
                         }
                 }}
 
-            ></div>
+            >
+            </div>
         );
     }
 }  

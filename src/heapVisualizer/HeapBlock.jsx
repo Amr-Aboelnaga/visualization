@@ -50,12 +50,13 @@ export default class HeapBlock extends Component {
 
     }
     removeSmallest() {
-
-        let actions = this.state.heap.remove().actions
-        const initialarray = actions.shift().element
-        const level = Math.floor(Math.log2(initialarray.length - 1))
-        const position = (initialarray.length - 1) - (Math.pow(2, level) - 1) - 1
-        this.setState({ selected: [this.state.initialheap[level][position]], remove: true, actions: actions })
+        if (this.state.heap.length > 1) {
+            let actions = this.state.heap.remove().actions
+            const initialarray = actions.shift().element
+            const level = Math.floor(Math.log2(initialarray.length - 1))
+            const position = (initialarray.length - 1) - (Math.pow(2, level) - 1) - 1
+            this.setState({ selected: [this.state.initialheap[level][position]], remove: true, actions: actions })
+        }
     }
 
     componentDidUpdate() {
