@@ -23,7 +23,7 @@ export function dijkstra(grid, startNode, finishNode) {
         for (const neighbor of neighbors) {
             neighbor.distance = closestNode.distance + 1;
             if (neighbor.isWeight) {
-                neighbor.distance += 10
+                neighbor.distance += 15
             }
             neighbor.previousNode = closestNode;
             unvisitedNodes.insert(neighbor)

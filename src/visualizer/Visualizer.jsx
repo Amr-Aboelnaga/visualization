@@ -3,10 +3,6 @@ import React, { Component } from 'react';
 import './Node.css';
 import { Button, Container } from 'react-bootstrap';
 
-const START_NODE_ROW = 7;
-const START_NODE_COL = 15;
-const FINISH_NODE_ROW = 16;
-const FINISH_NODE_COL = 35;
 export default class Visualizer extends Component {
     static staticgrid
     constructor() {
@@ -19,7 +15,13 @@ export default class Visualizer extends Component {
             mousedown: false,
             reset: false,
             weightdown: false,
-            variant: "outline-info"
+            variant: "outline-info",
+            startPressed: false,
+            finishPressed: false,
+            startCoordinates: { row: 7, col: 15 },
+            finishCoordinates: { row: 16, col: 35 },
+            calculated: false
+
         };
     }
     contains(a, obj) {
@@ -40,7 +42,7 @@ export default class Visualizer extends Component {
         return false;
     }
     componentDidMount() {
-        const grid = getInitialGrid();
+        const grid = this.getInitialGrid();
         this.setState({ grid });
         Visualizer.staticgrid = grid
     }
@@ -48,8 +50,8 @@ export default class Visualizer extends Component {
         const oldgrid = Visualizer.staticgrid
         this.setState({ oldgrid })
         const { grid } = this.state;
-        const startNode = grid[START_NODE_ROW][START_NODE_COL];
-        const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
+        const startNode = grid[this.state.startCoordinates.row][this.state.startCoordinates.col];
+        const finishNode = grid[this.state.finishCoordinates.row][this.state.finishCoordinates.col];
         var start = new Date().getTime();
         const visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
         var end = new Date().getTime();
@@ -57,7 +59,7 @@ export default class Visualizer extends Component {
         console.log(dur)
         this.setState({ visitedNodesInOrder })
         const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
-        this.setState({ nodesInShortestPathOrder })
+        this.setState({ nodesInShortestPathOrder, calculated: true })
         console.log(nodesInShortestPathOrder)
     }
     wallIt(row, col) {
@@ -66,12 +68,41 @@ export default class Visualizer extends Component {
     weightIt(row, col) {
         Visualizer.staticgrid[row][col].isWeight = !Visualizer.staticgrid[row][col].isWeight
     }
-    handleDown() {
-        this.setState({ mousedown: true });
+    startIt(row, col) {
+        Visualizer.staticgrid[row][col].isStart = true
     }
-    handleUp() {
-        this.setState({ mousedown: false });
+    finishIt(row, col) {
+        Visualizer.staticgrid[row][col].isFinish = true
+
     }
+    handleDown(row, col) {
+        if (Visualizer.staticgrid[row][col].isStart) {
+            this.setState({ mousedown: true, startPressed: true });
+
+        } else if (Visualizer.staticgrid[row][col].isFinish) {
+            console.log("here")
+            this.setState({ mousedown: true, finishPressed: true });
+
+        } else
+            this.setState({ mousedown: true });
+    }
+    normalize(row, col) {
+        Visualizer.staticgrid[row][col].isStart = false
+        Visualizer.staticgrid[row][col].isFinish = false
+
+
+    }
+    handleUp(row, col) {
+        if (this.state.startPressed) {
+            this.setState({ startCoordinates: { row: row, col: col }, mousedown: false, startPressed: false })
+
+        } else if (this.state.finishPressed) {
+            this.setState({ finishCoordinates: { row: row, col: col }, mousedown: false, startPressed: false, finishPressed: false })
+
+        } else
+            this.setState({ mousedown: false });
+    }
+
     switchToWeights() {
         let variant = ""
         if (this.state.variant === "outline-info") {
@@ -82,7 +113,7 @@ export default class Visualizer extends Component {
         this.setState({ variant: variant, weightdown: !this.state.weightdown })
     }
     render() {
-        const { grid, visitedNodesInOrder, nodesInShortestPathOrder, mousedown, weightdown, variant } = this.state;
+        const { grid, visitedNodesInOrder, nodesInShortestPathOrder, mousedown, weightdown, variant, startPressed, finishPressed, calculated } = this.state;
         const { height, width } = this.props
 
         return (
@@ -124,11 +155,18 @@ export default class Visualizer extends Component {
                                                 isPath={isPath}
                                                 wallIt={this.wallIt}
                                                 weightIt={this.weightIt}
+                                                startPressed={startPressed}
+                                                finishPressed={finishPressed}
+                                                startIt={this.startIt}
+                                                finishIt={this.finishIt}
                                                 mousedown={mousedown}
                                                 weightdown={weightdown}
-                                                mousedownHandle={() => this.handleDown()}
-                                                mouseUpHandle={() => this.handleUp()}
+                                                mousedownHandle={(row, col) => this.handleDown(row, col)}
+                                                mouseUpHandle={(row, col) => this.handleUp(row, col)}
+                                                normalize={(row, col) => { this.normalize(row, col) }}
                                                 weight={weight}
+                                                calculated={calculated}
+                                                recalculate={() => this.visualizeDijkstra()}
                                                 delay={this.getIndex(visitedNodesInOrder, node)}
                                             ></Node>
                                         );
@@ -142,38 +180,39 @@ export default class Visualizer extends Component {
             </div>
         );
     }
+    getInitialGrid() {
+        const grid = [];
+        for (let row = 0; row < 20; row++) {
+            const currentRow = [];
+            for (let col = 0; col < 50; col++) {
+                const Node = this.createNode(col, row);
+                currentRow.push(Node);
+            }
+            grid.push(currentRow);
+        }
+        return grid;
+    };
+
+    createNode(col, row) {
+        return {
+            col,
+            row,
+            isStart: row === this.state.startCoordinates.row && col === this.state.startCoordinates.col,
+            isFinish: row === this.state.finishCoordinates.row && col === this.state.finishCoordinates.col,
+            distance: Infinity,
+            isWeight: false,
+            isVisited: false,
+            isWall: false,
+            previousNode: null,
+        };
+    };
 }
 
 
 
 
 
-const getInitialGrid = () => {
-    const grid = [];
-    for (let row = 0; row < 20; row++) {
-        const currentRow = [];
-        for (let col = 0; col < 50; col++) {
-            const Node = createNode(col, row);
-            currentRow.push(Node);
-        }
-        grid.push(currentRow);
-    }
-    return grid;
-};
 
-const createNode = (col, row) => {
-    return {
-        col,
-        row,
-        isStart: row === START_NODE_ROW && col === START_NODE_COL,
-        isFinish: row === FINISH_NODE_ROW && col === FINISH_NODE_COL,
-        distance: Infinity,
-        isWeight: false,
-        isVisited: false,
-        isWall: false,
-        previousNode: null,
-    };
-};
 export class Node extends Component {
     constructor(props) {
         super(props)
@@ -192,15 +231,17 @@ export class Node extends Component {
             pathAnimated: false,
             isWall: this.props.isWall,
             isWeight: this.props.isWeight,
+            isStart: this.props.isStart
         }
     }
     switch() {
         setTimeout(() => {
+            const className = this.state.isWeight ? 'node-visited-weighted' : 'node-visited'
             this.setState({
-                extraClassName: 'node-visited',
+                extraClassName: className,
                 visited: true
             })
-        }, this.props.delay);
+        }, this.props.delay * 10);
     }
     switchPath() {
         setTimeout(() => {
@@ -208,7 +249,7 @@ export class Node extends Component {
                 extraClassName: 'node-shortest-path',
                 pathAnimated: true
             })
-        }, this.props.isPath);
+        }, this.props.isPath * 10);
     }
     beWeight() {
         if (this.state.isWeight) {
@@ -237,6 +278,16 @@ export class Node extends Component {
         }
 
     }
+    beFinish() {
+        this.setState({ extraClassName: 'node-finish', isStart: false })
+
+    }
+    beStart() {
+        this.setState({ extraClassName: 'node-start', isStart: true })
+    }
+    normalize() {
+        this.setState({ extraClassName: '', isStart: false, isFinish: false })
+    }
     render() {
         const {
             col,
@@ -244,7 +295,10 @@ export class Node extends Component {
             mousedownHandle,
             mouseUpHandle,
             row,
-            weightIt
+            weightIt,
+            startIt,
+            normalize,
+            finishIt,
 
         } = this.props;
 
@@ -259,22 +313,40 @@ export class Node extends Component {
                 id={`node-${row}-${col}`}
                 className={`node ${this.state.extraClassName}`}
                 onMouseDown={() => {
-                    if (!this.props.isStart && !this.props.isFinish) {
-                        if (this.props.weightdown) {
+                    if (this.props.startPressed) {
+                        this.beStart();
+                        startIt(row, col)
+                    } else if (this.props.finishPressed) {
+                        this.beFinish();
+                        finishIt(row, col)
+
+                    } else if (this.props.weightdown) {
+                        if (!this.props.isStart) {
                             this.beWeight();
                             weightIt(row, col);
-                        } else {
+                        }
+                    } else {
+                        if (!this.props.isStart) {
                             this.beWall();
                             wallIt(row, col);
                         }
-                        mousedownHandle();
                     }
+                    mousedownHandle(row, col);
+
                 }}
-                onMouseUp={() => mouseUpHandle()}
+                onMouseUp={() => mouseUpHandle(row, col)}
                 onMouseOver={() => {
                     if (!this.props.isStart && !this.props.isFinish)
                         if (this.props.mousedown) {
-                            if (this.props.weightdown) {
+                            if (this.props.startPressed) {
+                                this.beStart();
+                                startIt(row, col)
+                            } else if (this.props.finishPressed) {
+                                this.beFinish();
+                                finishIt(row, col)
+
+                            }
+                            else if (this.props.weightdown) {
                                 this.beWeight();
                                 weightIt(row, col);
                             } else {
@@ -284,7 +356,16 @@ export class Node extends Component {
 
                         }
                 }}
+                onMouseLeave={() => {
+                    if (this.props.mousedown) {
+                        if (this.props.startPressed || this.props.finishPressed) {
+                            this.normalize()
+                            normalize(row, col)
 
+
+                        }
+                    }
+                }}
             >
             </div>
         );
