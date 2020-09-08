@@ -50,7 +50,7 @@ export default class HeapBlock extends Component {
 
     }
     removeSmallest() {
-        if (this.state.heap.length > 1) {
+        if (this.state.heap.heap.length > 1) {
             let actions = this.state.heap.remove().actions
             const initialarray = actions.shift().element
             const level = Math.floor(Math.log2(initialarray.length - 1))

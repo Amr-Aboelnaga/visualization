@@ -80,7 +80,6 @@ export default class Visualizer extends Component {
             this.setState({ mousedown: true, startPressed: true });
 
         } else if (Visualizer.staticgrid[row][col].isFinish) {
-            console.log("here")
             this.setState({ mousedown: true, finishPressed: true });
 
         } else
