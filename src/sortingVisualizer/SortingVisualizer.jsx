@@ -70,7 +70,7 @@ export default class SortingVisualizer extends Component {
         let lines = text.split("\n")
         for (let i = 0; i < lines.length; i++) {
             if (lines[i].includes("add") || lines[i].includes("change") || lines[i].includes("remove") || lines[i].includes("initialize")) {
-                lines[i] = lines[i] + `\r\n  await this.sleep(delay);`
+                lines[i] = lines[i] + `\r\n  await sleep(delay);`
             }
         }
         const add = (element) => {
@@ -84,6 +84,9 @@ export default class SortingVisualizer extends Component {
         }
         const initialize = (array) => {
             this.initializeArray(array)
+        }
+        const sleep = (milliseconds) => {
+            return new Promise(resolve => setTimeout(resolve, milliseconds))
         }
         const newtext = lines.join("\r\n")
         eval("(async () => {" + newtext + "})()")
