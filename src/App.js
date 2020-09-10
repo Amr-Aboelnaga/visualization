@@ -12,7 +12,6 @@ import {
 import HeapBlock from './heapVisualizer/HeapBlock';
 import SortingVisualizer from './sortingVisualizer/SortingVisualizer';
 import useWindowDimensions from './hooks/windowSizeHook';
-import Iframe from 'react-iframe'
 
 function App() {
   const { height, width } = useWindowDimensions()

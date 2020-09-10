@@ -3,6 +3,8 @@ import { Container, Col, Row, Button } from 'react-bootstrap';
 import { bubbleSort } from '../algorithms/bubbleSort'
 import ArrayElement from './ArrayElement';
 import HeapBlock from '../heapVisualizer/HeapBlock';
+import TextBox from './TextBox'
+
 
 export default class SortingVisualizer extends Component {
 
@@ -43,9 +45,41 @@ export default class SortingVisualizer extends Component {
     sleep(milliseconds) {
         return new Promise(resolve => setTimeout(resolve, milliseconds))
     }
+    removeElementFromArray(i) {
+        const array = this.state.array;
+        array.splice(i, 1)
+        this.setState({ array: array })
 
-    addElementToArray() {
-        let element = Math.floor(Math.random() * 1000) + 1
+    }
+    changeElementAtArray(i, value) {
+        const array = this.state.array;
+        array[i] = value
+        this.setState({ array: array })
+    }
+    initializeArray(array) {
+        let largestSoFar = -Infinity
+        for (let element of array) {
+            if (element > largestSoFar) {
+                largestSoFar = element
+            }
+        }
+        this.setState({ array: array, largestSoFar: largestSoFar })
+    }
+    async getText(text) {
+        let delay = 1000
+        let lines = text.split("\n")
+        for (let i = 0; i < lines.length; i++) {
+            if (lines[i].includes("this.addElementToArray") || lines[i].includes("this.changeElementAtArray") || lines[i].includes("this.removeElementFromArray") || lines[i].includes("this.initializeArray")) {
+                lines[i] = lines[i] + `\r\n  await this.sleep(delay);`
+            }
+        }
+
+        console.log()
+        const newtext = lines.join("\r\n")
+        eval("(async () => {" + newtext + "})()")
+    }
+    addElementToArray(num) {
+        let element = num ? num : Math.floor(Math.random() * 1000) + 1
         this.state.array.push(element)
         if (element > this.state.largestSoFar)
             this.setState({ array: this.state.array, largestSoFar: element })
@@ -262,7 +296,10 @@ export default class SortingVisualizer extends Component {
                             </Row>
                         </Col>
                         <div >{addon()}</div>
+                        <TextBox width={width - 1000} getText={(text) => this.getText(text)}></TextBox>
+
                     </Row>
+
                 </Container >
 
             </div>
