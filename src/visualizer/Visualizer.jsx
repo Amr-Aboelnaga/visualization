@@ -1,4 +1,6 @@
 import { dijkstra, getNodesInShortestPathOrder } from '../algorithms/dijkstra';
+import { astar } from '../algorithms/astar';
+
 import React, { Component } from 'react';
 import './Node.css';
 import { Button, Container } from 'react-bootstrap';
@@ -45,6 +47,21 @@ export default class Visualizer extends Component {
         const grid = this.getInitialGrid();
         this.setState({ grid });
         Visualizer.staticgrid = grid
+    }
+    visualizeAstar() {
+        const { grid } = this.state;
+        const startNode = grid[this.state.startCoordinates.row][this.state.startCoordinates.col];
+        const finishNode = grid[this.state.finishCoordinates.row][this.state.finishCoordinates.col];
+        var start = new Date().getTime();
+        const visitedNodesInOrder = astar(grid, startNode, finishNode);
+        var end = new Date().getTime();
+        var dur = end - start;
+        console.log(dur)
+        console.log(visitedNodesInOrder)
+        this.setState({ visitedNodesInOrder })
+        const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
+        this.setState({ nodesInShortestPathOrder, calculated: true })
+        console.log(nodesInShortestPathOrder)
     }
     visualizeDijkstra() {
         const oldgrid = Visualizer.staticgrid
@@ -123,6 +140,9 @@ export default class Visualizer extends Component {
 
                 <Button variant="outline-info" onClick={() => this.visualizeDijkstra()}>
                     Visualize Dijkstra's Algorithm
+            </Button>
+                <Button variant="outline-info" onClick={() => this.visualizeAstar()}>
+                    Visualize A*'s Algorithm
             </Button>
                 <Button variant="outline-info" onClick={() => this.props.reset()}>
                     Clear Board

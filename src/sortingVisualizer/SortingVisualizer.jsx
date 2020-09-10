@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Container, Col, Row, Button } from 'react-bootstrap';
 import { bubbleSort } from '../algorithms/bubbleSort'
 import ArrayElement from './ArrayElement';
+import HeapBlock from '../heapVisualizer/HeapBlock';
 
 export default class SortingVisualizer extends Component {
 
@@ -15,9 +16,20 @@ export default class SortingVisualizer extends Component {
             mergeSelected: [],
             selected: [],
             height: this.props.height,
-            width: this.props.width
+            width: this.props.width,
+            heap: false
         }
 
+    }
+    async update(element, index) {
+
+        const array = this.state.array
+        array[index] = element
+        this.setState({ array: array, selected: [index] })
+        await this.sleep(500)
+        if (index === this.state.array.length - 1) {
+            this.setState({ heap: false, selected: [] })
+        }
     }
     clear() {
         this.setState({ array: [], selected: [], mergeSelected: [], largestSoFar: [] })
@@ -124,6 +136,9 @@ export default class SortingVisualizer extends Component {
         })
         return sorted;
     }
+    async heapSort() {
+        this.setState({ heap: true })
+    }
     componentDidUpdate() {
         const currentAction = this.state.actions.shift()
         if (currentAction)
@@ -160,12 +175,26 @@ export default class SortingVisualizer extends Component {
 
     render() {
 
-        const { array, largestSoFar, selected, mergeSelected } = this.state
-        const { width, height } = this.props
-        console.log(width)
-        console.log(height)
+        const { array, largestSoFar, selected, mergeSelected, heap } = this.state
+        let { width, height } = this.props
+
 
         const space = (1 / array.length) * 100
+        let addon = () => {
+            return (<div></div>)
+        }
+
+        if (heap) {
+            const heaparray = []
+            for (let i = 0; i < array.length; i++) {
+                heaparray.push({ distance: array[i] })
+            }
+            addon = () => {
+                return (
+                    <HeapBlock width={width / 2} height={height / 2} array={array} updateExternalArray={(element, index) => this.update(element, index)}></HeapBlock>
+                )
+            }
+        }
         return (
             <div style={{
                 verticalAlign: 'top', display: ' inline-block'
@@ -183,54 +212,59 @@ export default class SortingVisualizer extends Component {
                 <Button variant="outline-info" onClick={() => this.mergeSort(this.state.array)}>
                     MergeSort
             </Button>
+                <Button variant="outline-info" onClick={() => this.heapSort()}>
+                    HeapSort
+            </Button>
                 <Button variant="outline-info" onClick={() => this.clear()}>
                     Clear
             </Button>
 
                 < Container style={{ maxWidth: width - 100, maxHeight: height - 50, minWidth: width - 100, minHeight: height - 50, marginTop: '200px' }}>
-
-
                     <Row>
+                        <Col>
+                            <Row>
 
-                        {
-                            array.map((element, index) => {
-                                let isSelected = false
-                                let i = 0
-                                for (let num of mergeSelected) {
-                                    if (element === num) {
+                                {
+                                    array.map((element, index) => {
+                                        let isSelected = false
+                                        let i = 0
+                                        for (let num of mergeSelected) {
+                                            if (element === num) {
 
-                                        element = mergeSelected[i]
-                                        isSelected = true
+                                                element = mergeSelected[i]
+                                                isSelected = true
 
-                                    }
-                                    i = i + 1;
+                                            }
+                                            i = i + 1;
+                                        }
+
+                                        if (selected)
+                                            for (let element of selected) {
+                                                if (element === index) {
+                                                    isSelected = true
+                                                }
+                                            }
+                                        return (
+                                            <Col key={Math.random()} style={{
+                                                width: `${space}%`,
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                                transform: 'rotate(180deg)'
+                                            }}>
+                                                <ArrayElement key={index * Math.random()} value={element} largestSoFar={largestSoFar} variant={"info"} isSelected={isSelected}></ArrayElement>
+                                            </Col>
+
+                                        );
+                                    })
                                 }
 
-                                if (selected)
-                                    for (let element of selected) {
-                                        if (element === index) {
-                                            isSelected = true
-                                        }
-                                    }
-                                return (
-                                    <Col key={Math.random()} style={{
-                                        width: `${space}%`,
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        transform: 'rotate(180deg)'
-                                    }}>
-                                        <ArrayElement key={index * Math.random()} value={element} largestSoFar={largestSoFar} variant={"info"} isSelected={isSelected}></ArrayElement>
-                                    </Col>
 
-                                );
-                            })
-                        }
-
-
+                            </Row>
+                        </Col>
+                        <div >{addon()}</div>
                     </Row>
-
-
                 </Container >
+
             </div>
 
 

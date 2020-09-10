@@ -30,7 +30,7 @@ export function dijkstra(grid, startNode, finishNode) {
         }
     }
 }
-function getNeighbors(node, grid) {
+export function getNeighbors(node, grid) {
     const neighbors = [];
     const { col, row } = node;
     if (col < grid[0].length - 1) neighbors.push(grid[row][col + 1]);
