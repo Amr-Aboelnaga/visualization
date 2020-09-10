@@ -69,12 +69,22 @@ export default class SortingVisualizer extends Component {
         let delay = 1000
         let lines = text.split("\n")
         for (let i = 0; i < lines.length; i++) {
-            if (lines[i].includes("this.addElementToArray") || lines[i].includes("this.changeElementAtArray") || lines[i].includes("this.removeElementFromArray") || lines[i].includes("this.initializeArray")) {
+            if (lines[i].includes("add") || lines[i].includes("change") || lines[i].includes("remove") || lines[i].includes("initialize")) {
                 lines[i] = lines[i] + `\r\n  await this.sleep(delay);`
             }
         }
-
-        console.log()
+        const add = (element) => {
+            this.addElementToArray(element)
+        }
+        const remove = (index) => {
+            this.removeElementFromArray(index)
+        }
+        const change = (index, value) => {
+            this.changeElementAtArray(index, value)
+        }
+        const initialize = (array) => {
+            this.initializeArray(array)
+        }
         const newtext = lines.join("\r\n")
         eval("(async () => {" + newtext + "})()")
     }
