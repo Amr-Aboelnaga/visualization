@@ -145,15 +145,7 @@ export default class HeapBlock extends Component {
             }
         }
     }
-    updateHeap(colIdx, rowIdx, newvalue) {
-        setTimeout(() => {
-            let heap = this.state.initialheap
-            heap[colIdx][rowIdx].value = newvalue
-            this.setState({ initialheap: heap, selected: [] })
-        }, 2000);
 
-
-    }
 
     contains(a, obj) {
         for (var i = 0; i < a.length; i++) {

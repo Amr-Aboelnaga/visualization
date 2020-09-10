@@ -148,12 +148,12 @@ export default class SortingVisualizer extends Component {
                 const currentArray = currentAction.currentArray
                 setTimeout(() => {
                     this.setState({ actions: this.state.actions, selected: [selected1, selected2], array: currentArray })
-                }, 10);
+                }, 500);
             } else if (currentAction.action === "settle") {
                 setTimeout(() => {
                     const currentArray = currentAction.currentArray
                     this.setState({ actions: this.state.actions, array: currentArray, selected: [] })
-                }, 10);
+                }, 500);
             }
     }
     contains(a, obj) {

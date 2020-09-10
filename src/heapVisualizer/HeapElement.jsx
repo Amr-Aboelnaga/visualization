@@ -50,9 +50,6 @@ export default class HeapElement extends Component {
             color = "blue"
             this.switch(toBeSwappedWith)
         }
-        // else if (isSelected && this.state.isSelected && value) {
-        //     this.switch()
-        // }
         if (value === undefined)
             color = ""
         return (
