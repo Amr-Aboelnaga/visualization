@@ -19,7 +19,8 @@ export default class SortingVisualizer extends Component {
             selected: [],
             height: this.props.height,
             width: this.props.width,
-            heap: false
+            heap: false,
+            code: false
         }
 
     }
@@ -243,10 +244,12 @@ export default class SortingVisualizer extends Component {
         return newArray
     }
 
-
+    code() {
+        this.setState({ code: !this.state.code })
+    }
     render() {
 
-        const { array, largestSoFar, selected, mergeSelected, heap } = this.state
+        const { array, largestSoFar, selected, mergeSelected, heap, code } = this.state
         let { width, height } = this.props
         console.log(selected)
 
@@ -263,6 +266,19 @@ export default class SortingVisualizer extends Component {
             addon = () => {
                 return (
                     <HeapBlock width={width / 2} height={height / 2} array={array} updateExternalArray={(element, index) => this.update(element, index)}></HeapBlock>
+                )
+            }
+
+        }
+        let codingArea = () => {
+            return (<div></div>)
+
+        }
+        if (code) {
+            codingArea = () => {
+                return (
+                    <TextBox width={width - 1000} getText={(text) => this.getText(text)}></TextBox>
+
                 )
             }
         }
@@ -288,6 +304,9 @@ export default class SortingVisualizer extends Component {
             </Button>
                 <Button variant="outline-info" onClick={() => this.clear()}>
                     Clear
+            </Button>
+                <Button variant="outline-info" onClick={() => this.code()}>
+                    Code
             </Button>
 
                 < Container style={{ maxWidth: width - 100, maxHeight: height - 50, minWidth: width - 100, minHeight: height - 50, marginTop: '200px' }}>
@@ -333,7 +352,7 @@ export default class SortingVisualizer extends Component {
                             </Row>
                         </Col>
                         <div >{addon()}</div>
-                        <TextBox width={width - 1000} getText={(text) => this.getText(text)}></TextBox>
+                        <div >{codingArea()}</div>
 
                     </Row>
 
