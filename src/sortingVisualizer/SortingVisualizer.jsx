@@ -54,7 +54,13 @@ export default class SortingVisualizer extends Component {
     changeElementAtArray(i, value) {
         const array = this.state.array;
         array[i] = value
-        this.setState({ array: array })
+        let largestSoFar = -Infinity
+        for (let element of array) {
+            if (element > largestSoFar) {
+                largestSoFar = element
+            }
+        }
+        this.setState({ array: array, largestSoFar: largestSoFar })
     }
     initializeArray(array) {
         let largestSoFar = -Infinity

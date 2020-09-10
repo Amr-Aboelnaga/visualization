@@ -33,11 +33,16 @@ export default class TextBox extends Component {
     }
 
     render() {
+        const placeHolder = ` use initialize(array) to initialize the array
+        use add(element) to add to the array
+        use remove(index) to remove from the array
+        use change(index,value) to change array[index] to value
 
+        `
         return (
             <Container>
                 <Col>
-                    <textarea rows="3" placeholder="write..." onChange={(e) =>
+                    <textarea rows="3" placeholder={placeHolder} onChange={(e) =>
                         this.handleChange({ "event": e, "name": "msg_text" })} onKeyDown={this.onKeyPress}
                         value={this.state.msg_text || ''} style={{ width: this.props.width, height: 300 }} >
                     </textarea>
