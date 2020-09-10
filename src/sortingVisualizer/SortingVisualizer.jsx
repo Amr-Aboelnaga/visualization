@@ -71,11 +71,20 @@ export default class SortingVisualizer extends Component {
         }
         this.setState({ array: array, largestSoFar: largestSoFar })
     }
+    select(...indices) {
+        this.setState({ selected: indices[0] })
+    }
+    unselect() {
+        this.setState({ selected: [] })
+    }
+    getArray() {
+        return this.state.array
+    }
     async getText(text) {
         let delay = 1000
         let lines = text.split("\n")
         for (let i = 0; i < lines.length; i++) {
-            if (lines[i].includes("add") || lines[i].includes("change") || lines[i].includes("remove") || lines[i].includes("initialize")) {
+            if (lines[i].includes("add") || lines[i].includes("change") || lines[i].includes("remove") || lines[i].includes("initialize") || lines[i].includes("select") || lines[i].includes("unselect")) {
                 lines[i] = lines[i] + `\r\n  await sleep(delay);`
             }
         }
@@ -93,6 +102,15 @@ export default class SortingVisualizer extends Component {
         }
         const sleep = (milliseconds) => {
             return new Promise(resolve => setTimeout(resolve, milliseconds))
+        }
+        const select = (...indices) => {
+            this.select(indices)
+        }
+        const unselect = () => {
+            this.unselect()
+        }
+        const getArray = () => {
+            return this.getArray()
         }
         const newtext = lines.join("\r\n")
         eval("(async () => {" + newtext + "})()")
@@ -230,7 +248,7 @@ export default class SortingVisualizer extends Component {
 
         const { array, largestSoFar, selected, mergeSelected, heap } = this.state
         let { width, height } = this.props
-
+        console.log(selected)
 
         const space = (1 / array.length) * 100
         let addon = () => {

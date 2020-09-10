@@ -33,11 +33,14 @@ export default class TextBox extends Component {
     }
 
     render() {
-        const placeHolder = ` use initialize(array) to initialize the array
+        const placeHolder = ` 
+        use initialize(array) to initialize the array
         use add(element) to add to the array
         use remove(index) to remove from the array
         use change(index,value) to change array[index] to value
-
+        use select(...indices) to select indices
+        use unselect() to unselect all
+        use getArray() to get the current array's state
         `
         return (
             <Container>
